@@ -20,7 +20,7 @@ class ListaEncadiada:
             aux = self.__head__
 
             while True:
-                if novo_no.pontuacao >= aux.pontuacao:
+                if novo_no.pontuacao <= aux.pontuacao:
                     if aux == self.__head__:
                         novo_no.prox = aux
                         aux.ante = novo_no
