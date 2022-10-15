@@ -1,3 +1,4 @@
+from itertools import count
 import statistics
 from Resolucoes.Q1.models.ListaEncadeada import ListaEncadiada
 
@@ -25,7 +26,7 @@ class Individuo:
         self.__id = value
 
     @property
-    def pontuacao(self):
+    def pontuacao(self) -> int:
         return self.__pontuacao
 
     @pontuacao.setter
@@ -121,30 +122,35 @@ def AvaliacaoIndividual(individuo:Individuo) -> int:
 
     grafo_mapa = {
         "A":{
+            "A":125,
             "B":100,
             "C":125,
             "D":100,
             "E":75
         },
         "B":{
+            "B":125,
             "A":100,
             "C":50,
             "D":75,
             "E":125
         },
         "C":{
+            "C":125,
             "A":125,
             "B":50,
             "D":100,
             "E":125
         },
         "D":{
+            "D":125,
             "A":100,
             "B":75,
             "C":100,
             "E":50
         },
         "E":{
+            "E":125,
             "A":75,
             "B":125,
             "C":125,
@@ -154,6 +160,14 @@ def AvaliacaoIndividual(individuo:Individuo) -> int:
 
     pontuacao = 0
 
+    if not (
+        "A" in individuo.genes
+        and "B" in individuo.genes
+        and "C" in individuo.genes
+        and "D" in individuo.genes
+        and "E" in individuo.genes):
+        pontuacao += 250
+
     pontuacao += grafo_mapa[individuo.genes[0]][individuo.genes[1]]
     pontuacao += grafo_mapa[individuo.genes[1]][individuo.genes[2]]
     pontuacao += grafo_mapa[individuo.genes[2]][individuo.genes[3]]
@@ -162,30 +176,29 @@ def AvaliacaoIndividual(individuo:Individuo) -> int:
     return pontuacao
 
 def CruzamentoGenetico(pai:Individuo, mae:Individuo) -> list:
-    
-    import random
 
     filhos = []
 
-    for x in range(2):
+    for i in range(2):
+        if i == 0:
+            caracteristicasFixos = pai.genes[2:4]
+            caracteristicasAusentes = [x for x in pai.genes if x not in pai.genes[2:4]]
 
-        mascara = [
-            random.randint(0,1), # escolhe aleatoriamente o gene do pai ou da mae
-            random.randint(0,1), # escolhe aleatoriamente o gene do pai ou da mae
-            0 if x == 0 else 1, # o primeiro filho erda do pai o segundo da mae
-            0  if x == 0 else 1, # o primeiro filho erda do pai o segundo da mae
-            random.randint(0,1) # escolhe aleatoriamente o gene do pai ou da mae
-            ]
-        
-        novo_gene = []
+            ordem = []
 
-        for i in range(len(mascara)):
-            if mascara[i] == 0:
-                novo_gene.append(pai.genes[i])
-            else:
-                novo_gene.append(mae.genes[i])
-
-        filhos.append(novo_gene)
+            for carct in caracteristicasAusentes:
+                contador = 0
+                for x in mae.genes:
+                    if x == carct:
+                        ordem.append([x, contador])
+                        break
+                    else:
+                        contador += 1
+            
+            print(ordem)
+            
+        else:
+            pass
 
     return filhos
 
@@ -197,3 +210,4 @@ def MutacaoGenetica(individuo:Individuo) -> list:
     gene[3] = aux
 
     return gene
+
